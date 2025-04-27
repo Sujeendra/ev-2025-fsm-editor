@@ -66,7 +66,7 @@ You can easily:
 
 ## 📸 Screenshot
 
-> ![FSM Editor Screenshot](fsm_ui.png) <!-- Optional if you upload a screenshot -->
+> ![FSM Editor Screenshot](fsm_ui.png) 
 
 ---
 
