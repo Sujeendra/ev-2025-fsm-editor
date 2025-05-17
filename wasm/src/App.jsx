@@ -557,20 +557,70 @@ export default function App() {
   const handleLoad = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+  
     const reader = new FileReader();
     reader.onload = (e) => {
       const json = JSON.parse(e.target.result);
-      const enrichedNodes = (json.nodes || []).map(n => ({
-        ...n,
-        data: { ...n.data, onUpdateLabel: updateNodeLabel, onDelete: deleteNode },
-        sourcePosition: 'right',
-        targetPosition: 'left'
-      }));
+  
+      const enrichedNodes = (json.nodes || []).map((n) => {
+        const commonData = {
+          ...n.data,
+          onDelete: deleteNode
+        };
+  
+        switch (n.type) {
+          case 'editableNode':
+            return {
+              ...n,
+              data: {
+                ...commonData,
+                onUpdateLabel: updateNodeLabel
+              },
+              sourcePosition: 'right',
+              targetPosition: 'left'
+            };
+          case 'conditionNode':
+            return {
+              ...n,
+              data: {
+                ...commonData,
+                onUpdateCondition: updateCondition,
+                onUpdateLogicType: updateLogicType
+              },
+              sourcePosition: 'right',
+              targetPosition: 'left'
+            };
+          case 'actionNode':
+            return {
+              ...n,
+              data: {
+                ...commonData,
+                onUpdateAction: updateAction
+              },
+              sourcePosition: 'right',
+              targetPosition: 'left'
+            };
+          case 'commentNode':
+            return {
+              ...n,
+              data: {
+                ...commonData,
+                onUpdateComment: updateCommentText
+              },
+              draggable: true,
+              selectable: true
+            };
+          default:
+            return n;
+        }
+      });
+  
       setNodes(enrichedNodes);
       setEdges(json.edges || []);
     };
     reader.readAsText(file);
   };
+  
 
   const handleDbcLoad = async (event) => {
     const file = event.target.files[0];
